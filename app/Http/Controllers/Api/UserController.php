@@ -4,15 +4,26 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests; //Necesario para que funcione el authorize
+
 
 class UserController extends Controller
 {
+    use AuthorizesRequests; //Necesario para que funcione el authorize
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        try {
+            $this->authorize('viewAny', User::class);
+            $users = User::all();
+            return response()->json($users);
+        } catch (AuthorizationException $e) {
+            return response()->json(['error' => 'No tienes permisos para ver los usuarios registrados.'], 403);
+        }
     }
 
     /**
@@ -20,7 +31,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $this->authorize('create', User::class);
+            $users = User::create($request->all());
+            return response()->json($users, 201);
+        } catch (AuthorizationException $e) {
+            return response()->json(['error' => 'No tienes permisos para crear usuarios.'], 403);
+        }
     }
 
     /**
@@ -28,7 +45,13 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $this->authorize('view', User::find($id));
+            $users = User::find($id);
+            return response()->json($users);
+        } catch (AuthorizationException $e) {
+            return response()->json(['error' => 'No tienes permisos para ver este usuario.'], 403);
+        }
     }
 
     /**
@@ -36,7 +59,14 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $this->authorize('update', User::find($id));
+            $users = User::find($id);
+            $users->update($request->all());
+            return response()->json($users, 200);
+        } catch (AuthorizationException $e) {
+            return response()->json(['error' => 'No tienes permisos para actualizar este usuario.'], 403);
+        }
     }
 
     /**
@@ -44,6 +74,13 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $this->authorize('delete', User::find($id));
+            $users = User::find($id);
+            $users->delete();
+            return response()->json(null, 204);
+        } catch (AuthorizationException $e) {
+            return response()->json(['error' => 'No tienes permisos para eliminar este usuario.'], 403);
+        }
     }
 }

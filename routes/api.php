@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\CutController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\OrderProductController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
