@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_user')->withPivot('quantity', 'unit_price');
     }
 
+    public function isAdmin()
+    {
+        return $this->hasAnyRole(['super-admin', 'admin']);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

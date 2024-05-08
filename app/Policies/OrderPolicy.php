@@ -12,8 +12,7 @@ class OrderPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole('super-admin') || $user->hasRole('admin') || $user->hasRole('user');
     }
 
     /**
@@ -21,8 +20,7 @@ class OrderPolicy
      */
     public function view(User $user, Order $model): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole('super-admin') || $user->hasRole('admin') || $user->hasRole('user');
     }
 
     /**
@@ -31,7 +29,6 @@ class OrderPolicy
     public function create(User $user): bool
     {
         return $user->hasRole('super-admin');
-
     }
 
     /**
@@ -40,7 +37,6 @@ class OrderPolicy
     public function update(User $user, Order $model): bool
     {
         return $user->hasRole('super-admin');
-
     }
 
     /**
@@ -49,7 +45,6 @@ class OrderPolicy
     public function delete(User $user, Order $model): bool
     {
         return $user->hasRole('super-admin');
-
     }
 
     /**
@@ -58,7 +53,6 @@ class OrderPolicy
     public function restore(User $user, Order $model): bool
     {
         return $user->hasRole('super-admin');
-
     }
 
     /**
@@ -67,6 +61,5 @@ class OrderPolicy
     public function forceDelete(User $user, Order $model): bool
     {
         return $user->hasRole('super-admin');
-
     }
 }

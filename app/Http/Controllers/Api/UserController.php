@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\UserRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests; //Necesario para que funcione el authorize
@@ -29,7 +29,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         try {
             $this->authorize('create', User::class);
@@ -57,7 +57,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
         try {
             $this->authorize('update', User::find($id));
