@@ -15,6 +15,7 @@
             $middleware->validateCsrfTokens(
                 except: ['stripe/*']
             );
+            $middleware->statefulApi();
         })
         ->withExceptions(function (Exceptions $exceptions) {
             //
