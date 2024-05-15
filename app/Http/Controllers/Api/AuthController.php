@@ -16,11 +16,9 @@ class AuthController extends Controller
         $emailOrUsername = $data['email'] ?? null;
         if ($emailOrUsername === null) {
             $response['message'] = 'Email or username is required';
-            return response()->json($response);
+            return response()->json($response, 400); // Código 400 para solicitud incorrecta
         }
-        $user = User::where(function ($query) use ($emailOrUsername) {
-            $query->where('email', $emailOrUsername);
-        })->first();
+        $user = User::where('email', $emailOrUsername)->first();
         if ($user) {
             if (Hash::check($data['password'], $user->password)) {
                 $token = $user->createToken('auth_token');
@@ -31,12 +29,15 @@ class AuthController extends Controller
                 $response['roles'] = $roles;
             } else {
                 $response['message'] = 'Invalid password';
+                return response()->json($response, 401); // Código 401 para no autorizado
             }
         } else {
             $response['message'] = 'User not found';
+            return response()->json($response, 404); // Código 404 para recurso no encontrado
         }
         return response()->json($response);
     }
+
 
     /**
      * Display a listing of the resource.
