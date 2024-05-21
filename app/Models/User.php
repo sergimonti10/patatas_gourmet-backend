@@ -36,6 +36,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $guard_name = 'api';
+
     public function orders()
     {
         return $this->hasMany(Order::class);

@@ -12,7 +12,7 @@ class OrderPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('super-admin') || $user->hasRole('admin') || $user->hasRole('user');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 
     /**
@@ -20,7 +20,7 @@ class OrderPolicy
      */
     public function view(User $user, Order $model): bool
     {
-        return $user->hasRole('super-admin') || $user->hasRole('admin') || $user->hasRole('user');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 
     /**
@@ -28,7 +28,7 @@ class OrderPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 
     /**
@@ -36,7 +36,7 @@ class OrderPolicy
      */
     public function update(User $user, Order $model): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 
     /**
@@ -44,7 +44,7 @@ class OrderPolicy
      */
     public function delete(User $user, Order $model): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 
     /**
@@ -52,7 +52,7 @@ class OrderPolicy
      */
     public function restore(User $user, Order $model): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -60,6 +60,6 @@ class OrderPolicy
      */
     public function forceDelete(User $user, Order $model): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 }

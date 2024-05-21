@@ -32,7 +32,6 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         try {
-            $this->authorize('create', User::class);
             $users = User::create($request->all());
             return response()->json($users, 201);
         } catch (AuthorizationException $e) {

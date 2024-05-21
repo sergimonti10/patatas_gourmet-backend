@@ -12,8 +12,7 @@ class CutPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -21,8 +20,7 @@ class CutPolicy
      */
     public function view(User $user, Cut $model): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -30,8 +28,7 @@ class CutPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -39,8 +36,7 @@ class CutPolicy
      */
     public function update(User $user, Cut $model): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -48,8 +44,7 @@ class CutPolicy
      */
     public function delete(User $user, Cut $model): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -57,8 +52,7 @@ class CutPolicy
      */
     public function restore(User $user, Cut $model): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 
     /**
@@ -66,7 +60,6 @@ class CutPolicy
      */
     public function forceDelete(User $user, Cut $model): bool
     {
-        return $user->hasRole('super-admin');
-
+        return $user->hasRole(['super-admin'], 'api') || $user->hasRole(['super-admin'], 'web');
     }
 }
