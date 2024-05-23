@@ -51,23 +51,47 @@ class AuthController extends Controller
             'email.unique' => 'El correo electrónico ya está en uso, por favor elige otro.',
             'password.required' => 'El campo contraseña es obligatorio.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'image.image' => 'El archivo debe ser una imagen.',
+            'image.mimes' => 'La imagen debe ser un archivo de tipo: jpeg, png, jpg, gif, svg.',
+            'image.max' => 'La imagen no debe ser mayor a 2048 kilobytes.',
         ];
 
         $request->validate([
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:8',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], $messages);
 
-        $user = User::create($request->all());
+        // Manejar el archivo de imagen
+        $imageName = null;
+        if ($request->hasFile('image')) {
+            $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('public/img_users', $imageName);
+        }
+
+        $user = User::create([
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'name' => $request->name,
+            'surname' => $request->surname,
+            'postal_code' => $request->postal_code,
+            'locality' => $request->locality,
+            'province' => $request->province,
+            'street' => $request->street,
+            'number' => $request->number,
+            'floor' => $request->floor,
+            'staircase' => $request->staircase,
+            'phone' => $request->phone,
+            'image' => $imageName,
+        ]);
+
         $role = Role::findByName('super-admin', 'api');
         $user->assignRole($role);
         $roles = $user->roles()->pluck('name');
         $response['roles'] = $roles;
 
-        // Generar token de autenticación
         $token = $user->createToken('auth_token');
 
-        // Responder con éxito
         $response['status'] = 1;
         $response['message'] = '¡Bienvenido a Patatas Gourmet!';
         $response['user'] = $user;
@@ -75,6 +99,7 @@ class AuthController extends Controller
 
         return response()->json($response, 201);
     }
+
 
 
 
