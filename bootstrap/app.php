@@ -13,7 +13,7 @@
         )
         ->withMiddleware(function (Middleware $middleware) {
             $middleware->validateCsrfTokens(
-                except: ['stripe/*', 'api/login', 'api/register']
+                except: ['stripe/*', 'api/*']
             );
             $middleware->statefulApi();
         })

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\OrderProductController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Response;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -15,10 +16,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::resource('users', UserController::class);
     Route::resource('cuts', CutController::class);
-    Route::resource('products', ProductController::class);
     Route::resource('orders', OrderController::class);
     Route::resource('orderProducts', OrderProductController::class);
+    Route::resource('products', ProductController::class)->only(['store', 'update', 'destroy']);
 });
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::resource('products', ProductController::class)->only(['index', 'show']);

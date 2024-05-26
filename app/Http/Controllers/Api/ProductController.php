@@ -21,7 +21,6 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $this->authorize('viewAny', Product::class);
             $products = Product::all();
             return response()->json($products);
         } catch (AuthorizationException $e) {
@@ -36,12 +35,33 @@ class ProductController extends Controller
     {
         try {
             $this->authorize('create', Product::class);
-            $products = Product::create($request->all());
-            return response()->json($products, 201);
+
+            $imageName = null;
+            $imageName2 = null;
+
+            if ($request->hasFile('image')) {
+                $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('public/img_products', $imageName);
+            }
+
+            if ($request->hasFile('image2')) {
+                $imageName2 = time() . '-' . $request->file('image2')->getClientOriginalName();
+                $request->file('image2')->storeAs('public/img_products', $imageName2);
+            }
+
+            $productData = $request->except(['image', 'image2']);
+
+            $productData['image'] = $imageName;
+            $productData['image2'] = $imageName2;
+
+            $product = Product::create($productData);
+
+            return response()->json($product, 201);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para crear productos.'], 403);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -49,7 +69,6 @@ class ProductController extends Controller
     public function show(string $id)
     {
         try {
-            $this->authorize('view', Product::find($id));
             $products = Product::find($id);
             return response()->json($products);
         } catch (AuthorizationException $e) {

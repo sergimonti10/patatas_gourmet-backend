@@ -52,17 +52,16 @@ class AuthController extends Controller
             'password.required' => 'El campo contraseña es obligatorio.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'image.image' => 'El archivo debe ser una imagen.',
-            'image.mimes' => 'La imagen debe ser un archivo de tipo: jpeg, png, jpg, gif, svg.',
+            'image.mimes' => 'La imagen debe ser un archivo de tipo: jpeg, png, jpg.',
             'image.max' => 'La imagen no debe ser mayor a 2048 kilobytes.',
         ];
 
         $request->validate([
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:8',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
         ], $messages);
 
-        // Manejar el archivo de imagen
         $imageName = null;
         if ($request->hasFile('image')) {
             $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
