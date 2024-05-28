@@ -9,6 +9,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -82,12 +83,39 @@ class ProductController extends Controller
     public function update(ProductRequest $request, string $id)
     {
         try {
-            $this->authorize('update', Product::find($id));
-            $products = Product::find($id);
-            $products->update($request->all());
-            return response()->json($products, 200);
+            $product = Product::find($id);
+
+            $this->authorize('update', $product);
+
+            $productData = $request->except(['image', 'image2']);
+
+            if ($request->hasFile('image')) {
+                if ($product->image) {
+                    Storage::delete('public/img_products/' . $product->image);
+                }
+                $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('public/img_products', $imageName);
+                $productData['image'] = $imageName;
+            }
+
+            if ($request->hasFile('image2')) {
+                // Eliminar la segunda imagen antigua
+                if ($product->image2) {
+                    Storage::delete('public/img_products/' . $product->image2);
+                }
+                // Guardar la nueva imagen
+                $imageName2 = time() . '-' . $request->file('image2')->getClientOriginalName();
+                $request->file('image2')->storeAs('public/img_products', $imageName2);
+                $productData['image2'] = $imageName2;
+            }
+
+            $product->update($productData);
+
+            return response()->json($product, 200);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para actualizar este producto.'], 403);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el producto.'], 500);
         }
     }
 
