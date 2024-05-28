@@ -82,9 +82,10 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id)
     {
+        Log::info('Datos de la solicitud:', $request->all());
+
         try {
             $product = Product::find($id);
-
             $this->authorize('update', $product);
 
             $productData = $request->except(['image', 'image2']);
@@ -99,11 +100,9 @@ class ProductController extends Controller
             }
 
             if ($request->hasFile('image2')) {
-                // Eliminar la segunda imagen antigua
                 if ($product->image2) {
                     Storage::delete('public/img_products/' . $product->image2);
                 }
-                // Guardar la nueva imagen
                 $imageName2 = time() . '-' . $request->file('image2')->getClientOriginalName();
                 $request->file('image2')->storeAs('public/img_products', $imageName2);
                 $productData['image2'] = $imageName2;
@@ -118,6 +117,8 @@ class ProductController extends Controller
             return response()->json(['error' => 'Error al actualizar el producto.'], 500);
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
