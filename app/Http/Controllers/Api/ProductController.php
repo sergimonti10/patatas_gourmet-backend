@@ -82,10 +82,8 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id)
     {
-        Log::info('Datos de la solicitud:', $request->all());
-
         try {
-            $product = Product::find($id);
+            $product = Product::with('cut')->find($id);
             $this->authorize('update', $product);
 
             $productData = $request->except(['image', 'image2']);
@@ -112,9 +110,7 @@ class ProductController extends Controller
 
             return response()->json($product, 200);
         } catch (AuthorizationException $e) {
-            return response()->json(['error' => 'No tienes permisos para actualizar este producto.'], 403);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al actualizar el producto.'], 500);
+            return response()->json(['error' => 'No tienes permisos para actualizar este corte.'], 403);
         }
     }
 
