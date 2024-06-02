@@ -24,8 +24,8 @@ class UserRequest extends FormRequest
         return [
             'name' => 'required|string',
             'surname' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string',
+            'email' => 'sometimes|email|unique:users,email',
+            'password' => 'sometimes|string',
             'postal_code' => 'required|integer',
             'locality' => 'required|string',
             'province' => 'required|string',
@@ -33,9 +33,9 @@ class UserRequest extends FormRequest
             'number' => 'required|string',
             'floor' => 'nullable|string',
             'staircase' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
             'phone' => 'required|string',
-            'role' => 'required|string|exists:roles,name',
+            'role' => 'sometimes|string|exists:roles,name',
         ];
     }
 }

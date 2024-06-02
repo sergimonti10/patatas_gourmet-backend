@@ -84,7 +84,7 @@ class AuthController extends Controller
             'image' => $imageName,
         ]);
 
-        $role = Role::findByName('super-admin', 'api');
+        $role = Role::findByName('user', 'api');
         $user->assignRole($role);
         $roles = $user->roles()->pluck('name');
         $response['roles'] = $roles;

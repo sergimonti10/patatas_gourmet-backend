@@ -22,7 +22,7 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $products = Product::all();
+            $products = Product::with('cut')->get();
             return response()->json($products);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para ver los productos.'], 403);
@@ -70,8 +70,8 @@ class ProductController extends Controller
     public function show(string $id)
     {
         try {
-            $products = Product::find($id);
-            return response()->json($products);
+            $product = Product::with('cut')->find($id);
+            return response()->json($product);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para ver este producto.'], 403);
         }
@@ -83,7 +83,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, string $id)
     {
         try {
-            $product = Product::with('cut')->find($id);
+            $product = Product::find($id);
             $this->authorize('update', $product);
 
             $productData = $request->except(['image', 'image2']);

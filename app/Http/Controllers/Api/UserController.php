@@ -7,7 +7,7 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests; //Necesario para que funcione el authorize
-
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -19,7 +19,7 @@ class UserController extends Controller
     {
         try {
             $this->authorize('viewAny', User::class);
-            $users = User::all();
+            $users = User::with('roles')->get();
             return response()->json($users);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para ver los usuarios registrados.'], 403);
@@ -46,7 +46,7 @@ class UserController extends Controller
     {
         try {
             $this->authorize('view', User::find($id));
-            $users = User::find($id);
+            $users = User::with('roles')->find($id);
             return response()->json($users);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para ver este usuario.'], 403);
@@ -59,14 +59,28 @@ class UserController extends Controller
     public function update(UserRequest $request, string $id)
     {
         try {
-            $this->authorize('update', User::find($id));
-            $users = User::find($id);
-            $users->update($request->all());
-            return response()->json($users, 200);
+            $user = User::find($id);
+            $this->authorize('update', $user);
+
+            $userData = $request->except(['image', 'email']);
+
+            if ($request->hasFile('image')) {
+                if ($user->image) {
+                    Storage::delete('public/img_users/' . $user->image);
+                }
+                $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('public/img_users', $imageName);
+                $userData['image'] = $imageName;
+            }
+
+            $user->update($userData);
+
+            return response()->json($user, 200);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para actualizar este usuario.'], 403);
         }
     }
+
 
     /**
      * Remove the specified resource from storage.
