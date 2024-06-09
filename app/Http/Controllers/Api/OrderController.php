@@ -7,6 +7,7 @@ use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -20,25 +21,50 @@ class OrderController extends Controller
     {
         try {
             $this->authorize('viewAny', Order::class);
-            $orders = Order::all();
+            $orders = Order::with('products', 'user')->get();
             return response()->json($orders);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para ver los pedidos.'], 403);
         }
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(OrderRequest $request)
     {
+        DB::beginTransaction();
+
         try {
             $this->authorize('create', Order::class);
-            $orders = Order::create($request->all());
-            return response()->json($orders, 201);
+
+            // Crear la orden
+            $order = Order::create($request->only([
+                'date_order',
+                'date_deliver',
+                'status',
+                'total_price',
+                'total_products',
+                'id_user'
+            ]));
+
+            // Agregar productos a la tabla pivot
+            foreach ($request->products as $product) {
+                $order->products()->attach($product['id'], [
+                    'quantity' => $product['quantity'],
+                    'unit_price' => $product['unit_price']
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json($order->load(['user', 'products']), 201);
         } catch (AuthorizationException $e) {
+            DB::rollBack();
             return response()->json(['error' => 'No tienes permisos para crear pedidos.'], 403);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Error al crear el pedido.'], 500);
         }
     }
 
@@ -49,9 +75,9 @@ class OrderController extends Controller
     {
         try {
             $this->authorize('view', Order::find($id));
-            $orders = Order::find($id);
-            return response()->json($orders);
-        } catch (AuthorizationException $e) {
+            $order = Order::with(['user', 'products'])->findOrFail($id);
+            return response()->json($order);
+        } catch (AuthorizationException) {
             return response()->json(['error' => 'No tienes permisos para ver este pedido.'], 403);
         }
     }

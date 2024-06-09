@@ -24,8 +24,8 @@ class OrderProductRequest extends FormRequest
         return [
             'quantity' => 'required|integer',
             'unit_price' => 'required|numeric',
-            'id_product' => 'required',
-            'id_order' => 'required',
+            'id_product' => 'required|exists:products, id',
+            'id_order' => 'required|exists:order, id',
         ];
     }
 }

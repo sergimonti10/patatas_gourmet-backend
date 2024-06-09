@@ -24,10 +24,10 @@ class OrderRequest extends FormRequest
         return [
             'date_order' => 'required|date',
             'date_deliver' => 'nullable|date',
-            'status' => 'required|in:pending,processing,shipped,completed,canceled',
+            'status' => 'required|in:pendiente,procesando,reparto,entregado,cancelado',
             'total_price' => 'required|numeric',
             'total_products' => 'required|integer',
-            'id_user' => 'required',
+            'id_user' => 'required|exists:users,id',
         ];
     }
 }

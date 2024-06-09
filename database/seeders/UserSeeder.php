@@ -32,8 +32,8 @@ class UserSeeder extends Seeder
                 'province' => $faker->state,
                 'street' => $faker->streetName,
                 'number' => $faker->buildingNumber,
-                'floor' => $faker->randomElement([$faker->numberBetween(1, 10), null]), // Algunos usuarios pueden no tener piso
-                'staircase' => $faker->randomElement(['A', 'B', 'C', null]), // Algunos usuarios pueden no tener escalera
+                'floor' => $faker->randomElement([$faker->numberBetween(1, 10), null]),
+                'staircase' => $faker->randomElement(['A', 'B', 'C', null]),
                 'image' => $faker->imageUrl(),
                 'phone' => $faker->phoneNumber,
             ]);

@@ -21,7 +21,7 @@ class OrderFactory extends Factory
         return [
             'date_order' => fake()->date(),
             'date_deliver' => fake()->dateTimeBetween('+1 day', '+1 week')->format('Y-m-d H:i:s'),
-            'status' => fake()->randomElement(['pending', 'processing', 'shipped', 'completed', 'canceled']),
+            'status' => fake()->randomElement(['pendiente', 'procesando', 'reparto', 'entregado', 'cancelado']),
             'total_price' => fake()->randomFloat(2, 10, 1000),
             'total_products' => fake()->numberBetween(1, 10),
             'id_user' => fake()->randomElement($id_user),
