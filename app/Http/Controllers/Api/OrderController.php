@@ -7,6 +7,7 @@ use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
@@ -38,7 +39,6 @@ class OrderController extends Controller
         try {
             $this->authorize('create', Order::class);
 
-            // Crear la orden
             $order = Order::create($request->only([
                 'date_order',
                 'date_deliver',
@@ -48,7 +48,6 @@ class OrderController extends Controller
                 'id_user'
             ]));
 
-            // Agregar productos a la tabla pivot
             foreach ($request->products as $product) {
                 $order->products()->attach($product['id'], [
                     'quantity' => $product['quantity'],
@@ -85,17 +84,31 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(OrderRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $this->authorize('update', Order::find($id));
-            $orders = Order::find($id);
-            $orders->update($request->all());
-            return response()->json($orders, 200);
+            $order = Order::find($id);
+            $request->validate([
+                'status' => 'required|string|in:pendiente,procesando,reparto,entregado,cancelado'
+            ]);
+
+            $order->status = $request->status;
+
+            if ($request->status === 'entregado') {
+                $order->date_deliver = now()->format('Y-m-d');
+            }
+
+            $order->save();
+            return response()->json($order, 200);
         } catch (AuthorizationException $e) {
             return response()->json(['error' => 'No tienes permisos para actualizar este pedido.'], 403);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el pedido.'], 500);
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.

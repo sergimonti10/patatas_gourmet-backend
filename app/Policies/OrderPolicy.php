@@ -36,7 +36,7 @@ class OrderPolicy
      */
     public function update(User $user, Order $model): bool
     {
-        return $user->hasRole(['super-admin', 'admin'], 'api') || $user->hasRole(['super-admin', 'admin'], 'web');
+        return $user->hasRole(['super-admin', 'admin', 'user'], 'api') || $user->hasRole(['super-admin', 'admin', 'user'], 'web');
     }
 
     /**
