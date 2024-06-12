@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderProductController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\InvoiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
@@ -24,3 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 Route::resource('products', ProductController::class)->only(['index', 'show']);
+
+Route::get('generate-invoice/{id}', [InvoiceController::class, 'generateInvoice']);
