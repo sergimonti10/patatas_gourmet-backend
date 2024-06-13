@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
@@ -20,6 +21,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('orders', OrderController::class);
     Route::resource('orderProducts', OrderProductController::class);
     Route::resource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+    Route::post('change-password', [AuthController::class, 'changePassword']);
+
+    // Route::get('/email/verify', function () {
+    //     return response()->json(['message' => 'Por favor verifica tu email.'], 200);
+    // })->name('verification.notice');
+
+    // Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    //     $request->fulfill();
+
+    //     return response()->json(['message' => 'Email verificado correctamente.'], 200);
+    // })->middleware(['signed'])->name('verification.verify');
+
+    // Route::post('/email/resend', function (Request $request) {
+    //     $request->user()->sendEmailVerificationNotification();
+
+    //     return response()->json(['message' => 'Link de envío de verificación'], 200);
+    // })->middleware(['throttle:6,1'])->name('verification.resend');
 });
 
 Route::post('login', [AuthController::class, 'login']);
