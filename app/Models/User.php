@@ -45,10 +45,15 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function products()
+    public function reviews()
     {
-        return $this->belongsToMany(Product::class, 'product_user')->withPivot('quantity', 'unit_price');
+        return $this->hasMany(Review::class, 'id_user');
     }
+
+    // public function products()
+    // {
+    //     return $this->belongsToMany(Product::class, 'product_user')->withPivot('quantity', 'unit_price');
+    // }
 
     /**
      * The attributes that should be hidden for serialization.

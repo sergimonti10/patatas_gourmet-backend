@@ -30,8 +30,13 @@ class Product extends Model
             ->withPivot('quantity', 'unit_price');
     }
 
-    public function users()
+    public function reviews()
     {
-        return $this->belongsToMany(User::class, 'product_user')->withPivot('quantity', 'unit_price');
+        return $this->hasMany(Review::class, 'id_product');
     }
+
+    // public function users()
+    // {
+    //     return $this->belongsToMany(User::class, 'product_user')->withPivot('quantity', 'unit_price');
+    // }
 }
