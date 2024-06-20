@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'], //http://localhost:3000
+    'allowed_origins' => ['https://patatas-gourmet-frontend-ehv2-pau80ngzr-sergimonti10s-projects.vercel.app'], //http://localhost:3000
 
     'allowed_origins_patterns' => [],
 
