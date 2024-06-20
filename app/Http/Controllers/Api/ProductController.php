@@ -22,6 +22,9 @@ class ProductController extends Controller
     public function index()
     {
         try {
+            header('Access-Control-Allow-Origin: https://patatas-gourmet-frontend-ehv2-pau80ngzr-sergimonti10s-projects.vercel.app');
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+            header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
             $products = Product::with('cut')->get();
             return response()->json($products);
         } catch (AuthorizationException $e) {
