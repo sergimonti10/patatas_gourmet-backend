@@ -23,11 +23,25 @@ class ProductController extends Controller
     {
         try {
             $products = Product::with('cut')->get();
-            return response()->json($products);
+
+            $response = response()->json($products);
+            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7-blhaekrt7-sergimonti10s-projects.vercel.app');
+            $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+
+            return $response;
         } catch (AuthorizationException $e) {
-            return response()->json(['error' => 'No tienes permisos para ver los productos.'], 403);
+            $response = response()->json(['error' => 'No tienes permisos para ver los productos.'], 403);
+            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7-blhaekrt7-sergimonti10s-projects.vercel.app');
+            $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+
+            return $response;
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
