@@ -25,7 +25,7 @@ class ProductController extends Controller
             $products = Product::with('cut')->get();
 
             $response = response()->json($products);
-            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7-blhaekrt7-sergimonti10s-projects.vercel.app');
+            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7.vercel.app');
             $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
@@ -33,7 +33,7 @@ class ProductController extends Controller
             return $response;
         } catch (AuthorizationException $e) {
             $response = response()->json(['error' => 'No tienes permisos para ver los productos.'], 403);
-            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7-blhaekrt7-sergimonti10s-projects.vercel.app');
+            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7.vercel.app');
             $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             $response->headers->set('Access-Control-Allow-Credentials', 'true');

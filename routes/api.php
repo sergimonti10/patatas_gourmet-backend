@@ -9,11 +9,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware([HandleCors::class, 'auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -42,9 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // })->middleware(['throttle:6,1'])->name('verification.resend');
 });
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('register', [AuthController::class, 'register']);
-Route::resource('products', ProductController::class)->only(['index', 'show']);
-
-Route::get('generate-invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
-Route::get('products/{productId}/reviews', [ReviewController::class, 'getReviewsByProduct']);
+Route::middleware([HandleCors::class])->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::resource('products', ProductController::class)->only(['index', 'show']);
+    Route::get('generate-invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
+    Route::get('products/{productId}/reviews', [ReviewController::class, 'getReviewsByProduct']);
+});
