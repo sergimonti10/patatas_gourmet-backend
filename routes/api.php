@@ -49,4 +49,10 @@ Route::middleware([HandleCors::class])->group(function () {
     Route::resource('products', ProductController::class)->only(['index', 'show']);
     Route::get('generate-invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
     Route::get('products/{productId}/reviews', [ReviewController::class, 'getReviewsByProduct']);
+
+    // Ruta para servir archivos estáticos
+    Route::get('/storage/{filename}', function ($filename) {
+        $path = storage_path('app/public/' . $filename);
+        return response()->file($path);
+    })->where('filename', '.*');
 });

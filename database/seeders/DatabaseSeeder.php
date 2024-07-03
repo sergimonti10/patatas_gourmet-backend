@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesSeeder::class);
         //$this->call(UserSeeder::class);
-        Cut::factory(10)->create();
-        Product::factory(10)->create();
+        //Cut::factory(10)->create();
+        //Product::factory(10)->create();
         //Order::factory(10)->create();
         //OrderProduct::factory(10)->create();
     }
