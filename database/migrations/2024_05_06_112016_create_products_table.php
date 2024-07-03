@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('price', 10, 2);
             $table->decimal('weight', 10, 2);
-            $table->string('image');
-            $table->string('image2');
+            $table->text('image');
+            $table->text('image2');
             $table->unsignedBigInteger('id_cut')->nullable();
             $table->foreign('id_cut')->references('id')->on('cuts')->onDelete('set null');
             $table->timestamps();
