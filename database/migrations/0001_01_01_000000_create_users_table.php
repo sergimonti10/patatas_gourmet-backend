@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('number', 5);
             $table->string('floor', 20)->nullable();
             $table->string('staircase', 20)->nullable();
-            $table->string('image')->nullable();
+            $table->longText('image')->nullable();
             $table->string('phone', 20);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

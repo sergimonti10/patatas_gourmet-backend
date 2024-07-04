@@ -65,12 +65,10 @@ class UserController extends Controller
             $userData = $request->except(['image', 'email']);
 
             if ($request->hasFile('image')) {
-                if ($user->image) {
-                    Storage::delete('public/img_users/' . $user->image);
-                }
-                $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
-                $request->file('image')->storeAs('public/img_users', $imageName);
-                $userData['image'] = $imageName;
+                $image = $request->file('image');
+                $imageMimeType = $image->getClientMimeType();
+                $imageBase64 = 'data:' . $imageMimeType . ';base64,' . base64_encode(file_get_contents($image->getRealPath()));
+                $userData['image'] = $imageBase64;
             }
 
             $user->update($userData);
@@ -80,7 +78,6 @@ class UserController extends Controller
             return response()->json(['error' => 'No tienes permisos para actualizar este usuario.'], 403);
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

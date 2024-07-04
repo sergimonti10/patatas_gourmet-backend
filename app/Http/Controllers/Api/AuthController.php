@@ -96,10 +96,11 @@ class AuthController extends Controller
             'role' => 'sometimes|string|exists:roles,name',
         ], $messages);
 
-        $imageName = null;
+        $imageBase64 = null;
         if ($request->hasFile('image')) {
-            $imageName = time() . '-' . $request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('public/img_users', $imageName);
+            $image = $request->file('image');
+            $imageMimeType = $image->getClientMimeType();
+            $imageBase64 = 'data:' . $imageMimeType . ';base64,' . base64_encode(file_get_contents($image->getRealPath()));
         }
 
         $user = User::create([
@@ -115,7 +116,7 @@ class AuthController extends Controller
             'floor' => $validatedData['floor'] ?? '',
             'staircase' => $validatedData['staircase'] ?? '',
             'phone' => $validatedData['phone'],
-            'image' => $imageName,
+            'image' => $imageBase64,
         ]);
 
         if (isset($validatedData['role'])) {
@@ -138,6 +139,7 @@ class AuthController extends Controller
 
         return response()->json($response, 201);
     }
+
 
     public function changePassword(Request $request)
     {

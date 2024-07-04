@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('price', 10, 2);
             $table->decimal('weight', 10, 2);
-            $table->text('image');
-            $table->text('image2');
+            $table->longText('image'); //longBlob en la bbdd
+            $table->longText('image2'); //longBlob en la bbdd
             $table->unsignedBigInteger('id_cut')->nullable();
             $table->foreign('id_cut')->references('id')->on('cuts')->onDelete('set null');
             $table->timestamps();
