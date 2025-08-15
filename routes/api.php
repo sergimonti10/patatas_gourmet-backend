@@ -25,7 +25,6 @@ Route::middleware([HandleCors::class, 'auth:sanctum'])->group(function () {
     Route::resource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::post('change-password', [AuthController::class, 'changePassword']);
     Route::resource('reviews', ReviewController::class);
-    Route::get('/health', fn() => response()->json(['status' => 'ok']));
 
 
     // Route::get('/email/verify', function () {
@@ -51,4 +50,5 @@ Route::middleware([HandleCors::class])->group(function () {
     Route::resource('products', ProductController::class)->only(['index', 'show']);
     Route::get('generate-invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
     Route::get('products/{productId}/reviews', [ReviewController::class, 'getReviewsByProduct']);
+    Route::get('/health', fn() => response()->json(['status' => 'ok']));
 });
