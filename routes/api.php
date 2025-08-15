@@ -56,4 +56,11 @@ Route::middleware([HandleCors::class])->group(function () {
         DB::select('select 1');
         return response()->json(['db' => 'ok']);
     });
+    Route::get('/products-demo', function () {
+        // Devuelve hasta 5 productos con campos seguros
+        return DB::table('products')
+            ->select('id', 'name')
+            ->limit(5)
+            ->get();
+    });
 });
