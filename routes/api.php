@@ -25,6 +25,8 @@ Route::middleware([HandleCors::class, 'auth:sanctum'])->group(function () {
     Route::resource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::post('change-password', [AuthController::class, 'changePassword']);
     Route::resource('reviews', ReviewController::class);
+    Route::get('/health', fn() => response()->json(['status' => 'ok']));
+
 
     // Route::get('/email/verify', function () {
     //     return response()->json(['message' => 'Por favor verifica tu email.'], 200);
