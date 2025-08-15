@@ -17,7 +17,7 @@
                 except: ['stripe/*', 'api/*']
             );
             // $middleware->statefulApi();
-            $middleware->append(HandleCors::class);
+            $middleware->prepend(HandleCors::class);
         })
         ->withExceptions(function (Exceptions $exceptions) {
             //
