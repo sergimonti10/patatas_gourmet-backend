@@ -10,7 +10,7 @@ php artisan view:clear    || true
 # '|| true' evita que falle si alguna cache no existía aún
 
 echo "[start] ejecutando migraciones..."
-php artisan migrate --force --no-interaction
+php artisan migrate --force || true
 # --force: permite migrar en 'production'
 # --no-interaction: no pide confirmaciones
 
