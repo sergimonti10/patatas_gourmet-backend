@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 
-Route::middleware([HandleCors::class, 'auth:sanctum'])->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -45,7 +45,7 @@ Route::middleware([HandleCors::class, 'auth:sanctum'])->group(function () {
     // })->middleware(['throttle:6,1'])->name('verification.resend');
 });
 
-Route::middleware([HandleCors::class])->group(function () {
+Route::middleware()->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
     Route::resource('products', ProductController::class)->only(['index', 'show']);
