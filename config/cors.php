@@ -15,16 +15,17 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'csrf-token', 'login'],
+    // 'paths' => ['api/*', 'sanctum/csrf-cookie', 'csrf-token', 'login'],
+    'paths' => ['*'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
     'allowed_origins' => [
         'https://patatas-gourmet-frontend.vercel.app',
         'http://localhost:3000',
     ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => ['#^https://.*\.vercel\.app$#'],
 
     'allowed_headers' => ['*'],
 
