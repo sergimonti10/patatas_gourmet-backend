@@ -51,16 +51,4 @@ Route::middleware([HandleCors::class])->group(function () {
     Route::resource('products', ProductController::class)->only(['index', 'show']);
     Route::get('generate-invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
     Route::get('products/{productId}/reviews', [ReviewController::class, 'getReviewsByProduct']);
-    Route::get('/health', fn() => response()->json(['status' => 'ok']));
-    Route::get('/db-health', function () {
-        DB::select('select 1');
-        return response()->json(['db' => 'ok']);
-    });
-    Route::get('/products-demo', function () {
-        // Devuelve hasta 5 productos con campos seguros
-        return DB::table('products')
-            ->select('id', 'name')
-            ->limit(5)
-            ->get();
-    });
 });
