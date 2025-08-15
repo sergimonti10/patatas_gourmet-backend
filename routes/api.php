@@ -13,6 +13,7 @@ use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\DB;
 
 Route::middleware([HandleCors::class, 'auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
@@ -51,4 +52,8 @@ Route::middleware([HandleCors::class])->group(function () {
     Route::get('generate-invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
     Route::get('products/{productId}/reviews', [ReviewController::class, 'getReviewsByProduct']);
     Route::get('/health', fn() => response()->json(['status' => 'ok']));
+    Route::get('/db-health', function () {
+        DB::select('select 1');
+        return response()->json(['db' => 'ok']);
+    });
 });
