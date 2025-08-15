@@ -16,16 +16,12 @@ return [
     */
 
     // 'paths' => ['api/*', 'sanctum/csrf-cookie', 'csrf-token', 'login'],
-    // 'paths' => ['*'],
 
-    // 'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    // 'allowed_methods' => ['*'],
 
-    // 'allowed_origins' => [
-    //     'https://patatas-gourmet-frontend.vercel.app',
-    //     'http://localhost:3000',
-    // ],
+    // 'allowed_origins' => ['*'], //http://localhost:3000
 
-    // 'allowed_origins_patterns' => ['#^https://.*\.vercel\.app$#'],
+    // 'allowed_origins_patterns' => [],
 
     // 'allowed_headers' => ['*'],
 
@@ -33,15 +29,25 @@ return [
 
     // 'max_age' => 0,
 
-    // 'supports_credentials' => false,
+    // 'supports_credentials' => true,
 
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'register'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['*'], // temporalmente abierto
+
+    // lista explícita de orígenes (mejor que '*')
+    'allowed_origins' => [
+        'https://patatas-gourmet-frontend.vercel.app',
+        'http://localhost:3000',
+    ],
+
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
     'max_age' => 0,
+
+    // como usas orígenes concretos, aquí puedes dejar false.
+    // Si algún día usas cookies/sanctum entre dominios, pon true
+    // y mantén 'allowed_origins' SIN '*'.
     'supports_credentials' => false,
 
 ];
