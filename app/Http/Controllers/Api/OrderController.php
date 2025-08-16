@@ -10,8 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -72,59 +71,35 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
-        Log::info('--- STORE ORDER START ---');
-        Log::info('Payload recibido', $request->all());
-
         DB::beginTransaction();
 
         try {
-            Log::info('Paso 1: authorize');
             $this->authorize('create', \App\Models\Order::class);
 
-            Log::info('Paso 2: creando Order');
-            $order = \App\Models\Order::create($request->only([
-                'date_order',
-                'date_deliver',
-                'status',
-                'total_price',
-                'total_products',
-                'id_user'
-            ]));
+            $dateOrder   = Carbon::parse($request->input('date_order'))->toDateString();   // <-- aquí
+            $dateDeliver = $request->filled('date_deliver')
+                ? Carbon::parse($request->input('date_deliver'))->toDateString()
+                : null;
 
-            Log::info('Order creado', $order->toArray());
+            $order = \App\Models\Order::create([
+                'date_order'     => $dateOrder,
+                'date_deliver'   => $dateDeliver,
+                'status'         => $request->input('status'),
+                'total_price'    => $request->input('total_price'),
+                'total_products' => $request->input('total_products'),
+                'id_user'        => $request->input('id_user'),
+            ]);
 
-            Log::info('Paso 3: recorriendo productos');
-            foreach ($request->products as $product) {
-                Log::info('Producto en request', $product);
-
-                $order->products()->attach($product['id'], [
-                    'quantity'   => $product['quantity'],
-                    'unit_price' => $product['unit_price'],
-                ]);
-
-                Log::info('Attach OK para producto', [
-                    'id'       => $product['id'],
-                    'quantity' => $product['quantity'],
-                    'unit_price' => $product['unit_price'],
+            foreach ($request->products as $p) {
+                $order->products()->attach($p['id'], [
+                    'quantity'   => $p['quantity'],
+                    'unit_price' => $p['unit_price'],
                 ]);
             }
 
-            Log::info('Paso 4: commit');
             DB::commit();
-
-            Log::info('--- STORE ORDER FINISH OK ---');
-
             return response()->json($order->load(['user', 'products']), 201);
-        } catch (AuthorizationException $e) {
-            Log::error('Error de autorización', ['msg' => $e->getMessage()]);
-            DB::rollBack();
-            return response()->json(['error' => 'No tienes permisos para crear pedidos.'], 403);
         } catch (\Throwable $e) {
-            Log::error('Error genérico en store', [
-                'msg' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'payload' => $request->all(),
-            ]);
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
