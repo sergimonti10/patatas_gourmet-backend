@@ -10,6 +10,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class OrderController extends Controller
 {
@@ -33,14 +35,54 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(OrderRequest $request)
+    // {
+    //     DB::beginTransaction();
+
+    //     try {
+    //         $this->authorize('create', Order::class);
+
+    //         $order = Order::create($request->only([
+    //             'date_order',
+    //             'date_deliver',
+    //             'status',
+    //             'total_price',
+    //             'total_products',
+    //             'id_user'
+    //         ]));
+
+    //         foreach ($request->products as $product) {
+    //             $order->products()->attach($product['id'], [
+    //                 'quantity' => $product['quantity'],
+    //                 'unit_price' => $product['unit_price']
+    //             ]);
+    //         }
+
+    //         DB::commit();
+
+    //         return response()->json($order->load(['user', 'products']), 201);
+    //     } catch (AuthorizationException $e) {
+    //         DB::rollBack();
+    //         return response()->json(['error' => 'No tienes permisos para crear pedidos.'], 403);
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return response()->json(['error' => 'Error al crear el pedido.'], 500);
+    //     }
+    // }
+
     public function store(OrderRequest $request)
     {
+        Log::info('--- STORE ORDER START ---');
+        Log::info('Payload recibido', $request->all());
+
         DB::beginTransaction();
 
         try {
-            $this->authorize('create', Order::class);
+            Log::info('Paso 1: authorize');
+            $this->authorize('create', \App\Models\Order::class);
 
-            $order = Order::create($request->only([
+            Log::info('Paso 2: creando Order');
+            $order = \App\Models\Order::create($request->only([
                 'date_order',
                 'date_deliver',
                 'status',
@@ -49,22 +91,42 @@ class OrderController extends Controller
                 'id_user'
             ]));
 
+            Log::info('Order creado', $order->toArray());
+
+            Log::info('Paso 3: recorriendo productos');
             foreach ($request->products as $product) {
+                Log::info('Producto en request', $product);
+
                 $order->products()->attach($product['id'], [
+                    'quantity'   => $product['quantity'],
+                    'unit_price' => $product['unit_price'],
+                ]);
+
+                Log::info('Attach OK para producto', [
+                    'id'       => $product['id'],
                     'quantity' => $product['quantity'],
-                    'unit_price' => $product['unit_price']
+                    'unit_price' => $product['unit_price'],
                 ]);
             }
 
+            Log::info('Paso 4: commit');
             DB::commit();
+
+            Log::info('--- STORE ORDER FINISH OK ---');
 
             return response()->json($order->load(['user', 'products']), 201);
         } catch (AuthorizationException $e) {
+            Log::error('Error de autorización', ['msg' => $e->getMessage()]);
             DB::rollBack();
             return response()->json(['error' => 'No tienes permisos para crear pedidos.'], 403);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            Log::error('Error genérico en store', [
+                'msg' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'payload' => $request->all(),
+            ]);
             DB::rollBack();
-            return response()->json(['error' => 'Error al crear el pedido.'], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
