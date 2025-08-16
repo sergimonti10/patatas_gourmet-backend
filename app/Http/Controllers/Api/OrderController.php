@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
 
 class OrderController extends Controller
 {
@@ -69,18 +71,22 @@ class OrderController extends Controller
     //     }
     // }
 
+
     public function store(OrderRequest $request)
     {
-        DB::beginTransaction();
+        Log::info('--- STORE ORDER DEBUG START ---', $request->all());
 
         try {
             $this->authorize('create', \App\Models\Order::class);
 
-            $dateOrder   = Carbon::parse($request->input('date_order'))->toDateString();   // <-- aquí
+            // Normaliza fechas (tu columna es DATE)
+            $dateOrder   = Carbon::parse($request->input('date_order'))->toDateString();
             $dateDeliver = $request->filled('date_deliver')
                 ? Carbon::parse($request->input('date_deliver'))->toDateString()
                 : null;
 
+            // 1) PROBAR SOLO EL INSERT DE LA ORDEN (sin transacción)
+            Log::info('Paso A: creando Order (sin TX)');
             $order = \App\Models\Order::create([
                 'date_order'     => $dateOrder,
                 'date_deliver'   => $dateDeliver,
@@ -89,21 +95,33 @@ class OrderController extends Controller
                 'total_products' => $request->input('total_products'),
                 'id_user'        => $request->input('id_user'),
             ]);
+            Log::info('Paso A OK', $order->toArray());
 
-            foreach ($request->products as $p) {
+            // 2) PROBAR ATTACH UNO A UNO
+            Log::info('Paso B: attach productos');
+            foreach ($request->input('products', []) as $p) {
+                Log::info('Attach intento', $p);
                 $order->products()->attach($p['id'], [
                     'quantity'   => $p['quantity'],
                     'unit_price' => $p['unit_price'],
                 ]);
+                Log::info('Attach OK', ['id' => $p['id']]);
             }
 
-            DB::commit();
+            Log::info('--- STORE ORDER DEBUG FINISH OK ---');
             return response()->json($order->load(['user', 'products']), 201);
         } catch (\Throwable $e) {
-            DB::rollBack();
+            Log::error('STORE ORDER DEBUG ERROR', [
+                'msg'   => $e->getMessage(),
+                'code'  => $e->getCode(),
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
 
     /**
      * Display the specified resource.
