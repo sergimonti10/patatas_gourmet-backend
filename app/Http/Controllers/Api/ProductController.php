@@ -21,26 +21,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        try {
-            $products = Product::with('cut')->get();
-
-            $response = response()->json($products);
-            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7.vercel.app');
-            $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            $response->headers->set('Access-Control-Allow-Credentials', 'true');
-
-            return $response;
-        } catch (AuthorizationException $e) {
-            $response = response()->json(['error' => 'No tienes permisos para ver los productos.'], 403);
-            $response->headers->set('Access-Control-Allow-Origin', 'https://patatas-gourmet-frontend-3tb7.vercel.app');
-            $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            $response->headers->set('Access-Control-Allow-Credentials', 'true');
-
-            return $response;
-        }
+        $products = Product::with('cut')->get();
+        return response()->json($products);
     }
+
 
 
     /**
